@@ -456,13 +456,18 @@ static int open_file( char *psz_filename, hnd_t *p_handle, video_info_t *info, c
         {
             // if converting from yuv, then we specify the matrix for the input, otherwise use the output's.
             int use_pc_matrix = avs_is_yuv( vi ) ? opt->input_range == RANGE_PC : opt->output_range == RANGE_PC;
-            snprintf( matrix, sizeof(matrix), "%s601", use_pc_matrix ? "PC." : "Rec" ); /* FIXME: use correct coefficients */
+            snprintf( matrix, sizeof(matrix), ( vi->width > 1024 || vi->height > 576 ) ? "709" : "601", use_pc_matrix ? "PC." : "Rec" ); /* FIXME: use correct coefficients */
             arg_arr[arg_count] = avs_new_value_string( matrix );
             arg_name[arg_count] = "matrix";
             arg_count++;
             // notification that the input range has changed to the desired one
             opt->input_range = opt->output_range;
         }
+        const char *arg_name[] = { NULL, "interlaced", "matrix" };
+        AVS_Value arg_arr[3];
+        arg_arr[0] = res;
+        arg_arr[1] = avs_new_value_bool( info->interlaced );
+        arg_arr[2] = avs_new_value_string( matrix );
         AVS_Value res2 = h->func.avs_invoke( h->env, conv_func, avs_new_value_array( arg_arr, arg_count ), arg_name );
         FAIL_IF_ERROR( avs_is_error( res2 ), "couldn't convert input clip to %s: %s\n", csp, avs_as_error( res2 ) );
         res = update_clip( h, &vi, res2, res );
@@ -519,8 +524,12 @@ static int open_file( char *psz_filename, hnd_t *p_handle, video_info_t *info, c
     else if( avs_is_yuy2( vi ) )
         info->csp = X264_CSP_YUYV;
 #if HAVE_SWSCALE
+    else if( avs_is_yuy2( vi ) )
+        info->csp = AV_PIX_FMT_YUYV422 | X264_CSP_OTHER;
     else if( avs_is_yv411( vi ) )
         info->csp = AV_PIX_FMT_YUV411P | X264_CSP_OTHER;
+    else if( avs_is_y8( vi ) )
+        info->csp = AV_PIX_FMT_GRAY8 | X264_CSP_OTHER;
 #endif
     else
     {
