@@ -212,11 +212,23 @@ static int open_file( char *psz_filename, hnd_t *p_handle, video_info_t *info, c
     info->thread_safe  = 0;
     h->vfr_input       = info->vfr;
 
-    if( opt->demuxer_threads > 1 )
-        c->thread_count = opt->demuxer_threads;
+    if( !opt->b_accurate_fps )
+        x264_ntsc_fps( &info->fps_num, &info->fps_den );
 
-    FAIL_IF_ERROR( avcodec_open2( h->lavc, avcodec_find_decoder( h->lavc->codec_id ), NULL ),
+    if( opt->demuxer_threads > 1 )
+        h->lavc->thread_count = opt->demuxer_threads;
+
+    AVCodec *p;
+    if( opt->lavf_decoder )
+        p = avcodec_find_decoder_by_name(opt->lavf_decoder);
+    else
+        p = avcodec_find_decoder( h->lavc->codec_id );
+    AVDictionary *avcodec_opts = NULL;
+    av_dict_set( &avcodec_opts, "strict", "-2", 0 );
+    FAIL_IF_ERROR( avcodec_open2( h->lavc, p, &avcodec_opts ),
                    "could not find decoder for video stream\n" );
+    if( avcodec_opts )
+        av_dict_free( &avcodec_opts );
 
     /* prefetch the first frame and set/confirm flags */
     h->first_pic = malloc( sizeof(cli_pic_t) );
@@ -233,10 +245,33 @@ static int open_file( char *psz_filename, hnd_t *p_handle, video_info_t *info, c
     info->sar_width  = h->lavc->sample_aspect_ratio.num;
     info->fullrange |= h->lavc->color_range == AVCOL_RANGE_JPEG;
 
+    /* -1 = 'unset' (internal) , 2 from lavf|ffms = 'unset' */
+    if( h->lavc->colorspace >= 0 && h->lavc->colorspace <= 8 && h->lavc->colorspace != 2 )
+        info->colormatrix = h->lavc->colorspace;
+    else
+        info->colormatrix = -1;
+
     /* avisynth stores rgb data vertically flipped. */
     if( !strcasecmp( get_filename_extension( psz_filename ), "avs" ) &&
         (h->lavc->pix_fmt == AV_PIX_FMT_BGRA || h->lavc->pix_fmt == AV_PIX_FMT_BGR24) )
         info->csp |= X264_CSP_VFLIP;
+
+    /* show video info */
+    double duration = h->lavf->streams[i]->duration * av_q2d(h->lavc->time_base);
+    const AVPixFmtDescriptor *pix_desc = av_pix_fmt_desc_get(h->lavc->pix_fmt);
+    x264_cli_log( "lavf", X264_LOG_INFO,
+                  "\n Format    : %s"
+                  "\n Codec     : %s ( %s )"
+                  "\n PixFmt    : %s"
+                  "\n Framerate : %d/%d"
+                  "\n Timebase  : %d/%d"
+                  "\n Duration  : %d:%02d:%02d\n",
+                  format ? format->name : h->lavf->iformat->name,
+                  p->name, p->long_name,
+                  pix_desc->name,
+                  h->lavf->streams[i]->avg_frame_rate.num, h->lavf->streams[i]->avg_frame_rate.den,
+                  h->lavf->streams[i]->time_base.num, h->lavf->streams[i]->time_base.den,
+                  (int)duration / 60 / 60, (int)duration / 60 % 60, (int)duration - (int)duration / 60 * 60 );
 
     *p_handle = h;
 
