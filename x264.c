@@ -1031,6 +1031,7 @@ static struct option long_options[] =
     { "fullhelp",          no_argument, NULL, OPT_FULLHELP },
     { "version",           no_argument, NULL, 'V' },
     { "profile",     required_argument, NULL, OPT_PROFILE },
+    { "profile-force",     no_argument, NULL, 0 },
     { "preset",      required_argument, NULL, OPT_PRESET },
     { "tune",        required_argument, NULL, OPT_TUNE },
     { "slow-firstpass",    no_argument, NULL, OPT_SLOWFIRSTPASS },
