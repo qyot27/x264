@@ -946,6 +946,7 @@ static void help( x264_param_t *defaults, int longhelp )
     H1( "      --log-level <string>    Specify the maximum level of logging [\"%s\"]\n"
         "                                  - %s\n", strtable_lookup( x264_log_level_names, cli_log_level - X264_LOG_NONE ),
                                        stringify_names( buf, x264_log_level_names ) );
+    H2( "      --stylish               r2204 style progress indicator\n");
     H1( "      --psnr                  Enable PSNR computation\n" );
     H1( "      --ssim                  Enable SSIM computation\n" );
     H1( "      --threads <integer>     Force a specific number of threads\n" );
