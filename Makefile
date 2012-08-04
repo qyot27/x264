@@ -2,6 +2,21 @@
 
 include config.mak
 
+# Silent make rules
+ifndef V
+Q      = @
+ECHO   = printf "$(1)\t%s\n" $(2)
+BRIEF  = CC AS YASM AR LD STRIP CP RC
+SILENT = RM RANLIB
+
+MSG    = $@
+M      = @$(call ECHO,$(TAG),$@);
+$(foreach VAR,$(BRIEF), \
+    $(eval override $(VAR) = @$$(call ECHO,$(VAR),$$(MSG)); $($(VAR))))
+$(foreach VAR,$(SILENT),$(eval override $(VAR) = @$($(VAR))))
+$(eval INSTALL = @$(call ECHO,INSTALL,$$(^:$(SRC_DIR)/%=%)); $(INSTALL))
+endif
+
 vpath %.c $(SRCPATH)
 vpath %.h $(SRCPATH)
 vpath %.S $(SRCPATH)
