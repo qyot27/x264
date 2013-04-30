@@ -338,7 +338,11 @@ static void print_version_info( void )
 #else
     printf( "using an unknown compiler\n" );
 #endif
-    printf( "x264 configuration: --chroma-format=%s\n", chroma_format_names[X264_CHROMA_FORMAT] );
+#if HAVE_OPENCL
+    printf( "x264 configuration: --chroma-format=%s --enable-opencl\n", chroma_format_names[X264_CHROMA_FORMAT] );
+#else
+    printf( "x264 configuration: --chroma-format=%s --disable-opencl\n", chroma_format_names[X264_CHROMA_FORMAT] );
+#endif
     printf( "libx264 configuration: --chroma-format=%s\n", chroma_format_names[x264_chroma_format] );
     printf( "x264 license: " );
 #if HAVE_GPL
