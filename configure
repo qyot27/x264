@@ -554,6 +554,7 @@ done
 [ "$cli" = "no" -a "$shared" = "no" -a "$static" = "no" ] && die "Nothing to build. Enable cli, shared or static."
 
 CC="${CC-${cross_prefix}gcc}"
+DEPCC="${CC-${cross_prefix}gcc}"
 STRIP="${STRIP-${cross_prefix}strip}"
 STRINGS="${STRINGS-${cross_prefix}strings}"
 INSTALL="${INSTALL-install}"
@@ -1509,6 +1510,7 @@ CFLAGSSO=$CFLAGSSO
 CFLAGSCLI=$CFLAGSCLI
 COMPILER=$compiler
 COMPILER_STYLE=$compiler_style
+DEPCC=$DEPCC
 DEPMM=$DEPMM
 DEPMT=$DEPMT
 LD=$LD
