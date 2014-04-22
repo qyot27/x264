@@ -558,6 +558,7 @@ DEPCC="${CC-${cross_prefix}gcc}"
 STRIP="${STRIP-${cross_prefix}strip}"
 STRINGS="${STRINGS-${cross_prefix}strings}"
 INSTALL="${INSTALL-install}"
+INSTALL_DIR="${INSTALL-install} -d"
 PKGCONFIG="${PKGCONFIG-${cross_prefix}pkg-config}"
 
 # ar and ranlib doesn't load the LTO plugin by default, prefer the gcc-prefixed wrappers which does.
@@ -1522,6 +1523,7 @@ AR=$AR
 RANLIB=$RANLIB
 STRIP=$STRIP
 INSTALL=$INSTALL
+INSTALL_DIR=$INSTALL_DIR
 AS=$AS
 ASFLAGS=$ASFLAGS
 RC=$RC

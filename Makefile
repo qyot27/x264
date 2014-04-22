@@ -7,7 +7,7 @@ ifndef V
 Q      = @
 ECHO   = printf "$(1)\t%s\n" $(2)
 BRIEF  = CC AS YASM AR LD STRIP CP RC
-SILENT = RM RANLIB
+SILENT = RM RANLIB INSTALL_DIR
 
 MSG    = $@
 M      = @$(call ECHO,$(TAG),$@);
@@ -398,23 +398,23 @@ distclean: clean
 	$(RM) -f config.mak x264_config.h config.h config.log x264.pc x264.def conftest*
 
 install-cli: x264$(EXE)
-	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL_DIR) $(DESTDIR)$(bindir)
 	$(INSTALL) $< $(DESTDIR)$(bindir)
 
 install-lib-dev: install-lib-headers install-lib-pc
 
 install-lib-headers: $(SRCPATH)/x264.h x264_config.h
-	$(INSTALL) -d $(DESTDIR)$(includedir)
+	$(INSTALL_DIR) $(DESTDIR)$(includedir)
 	$(INSTALL) -m 644 $^ $(DESTDIR)$(includedir)
 
 install-lib-pc: x264.pc
-	$(INSTALL) -d $(DESTDIR)$(libdir)/pkgconfig
+	$(INSTALL_DIR) $(DESTDIR)$(libdir)/pkgconfig
 	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)/pkgconfig
 
 install-lib-static: install-lib-dev install-static
 
 install-static: $(LIBX264)
-	$(INSTALL) -d $(DESTDIR)$(libdir)
+	$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)
 	$(if $(RANLIB), $(RANLIB) $(DESTDIR)$(libdir)/$(LIBX264))
 
@@ -429,11 +429,11 @@ uninstall: uninstall-soname
 endif
 
 install-implib: $(IMPLIBNAME)
-	$(INSTALL) -d $(DESTDIR)$(libdir)
+	$(INSTALL_DIR) $(DESTDIR)$(libdir)
 	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)
 
 install-implib-soname: $(SONAME)
-	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL_DIR) $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $< $(DESTDIR)$(bindir)
 
 install-soname: $(SONAME)
