@@ -396,9 +396,11 @@ install-lib-pc: x264.pc
 	$(INSTALL) -d $(DESTDIR)$(libdir)/pkgconfig
 	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)/pkgconfig
 
-install-lib-static: lib-static install-lib-dev
+install-lib-static: install-lib-dev install-static
+
+install-static: $(LIBX264)
 	$(INSTALL) -d $(DESTDIR)$(libdir)
-	$(INSTALL) -m 644 $(LIBX264) $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)
 	$(if $(RANLIB), $(RANLIB) $(DESTDIR)$(libdir)/$(LIBX264))
 
 install-lib-shared: lib-shared install-lib-dev
