@@ -386,10 +386,15 @@ install-cli: x264$(EXE)
 	$(INSTALL) -d $(DESTDIR)$(bindir)
 	$(INSTALL) $< $(DESTDIR)$(bindir)
 
-install-lib-dev:
-	$(INSTALL) -d $(DESTDIR)$(includedir) $(DESTDIR)$(libdir)/pkgconfig
-	$(INSTALL) -m 644 $(SRCPATH)/x264.h x264_config.h $(DESTDIR)$(includedir)
-	$(INSTALL) -m 644 x264.pc $(DESTDIR)$(libdir)/pkgconfig
+install-lib-dev: install-lib-headers install-lib-pc
+
+install-lib-headers: $(SRCPATH)/x264.h x264_config.h
+	$(INSTALL) -d $(DESTDIR)$(includedir)
+	$(INSTALL) -m 644 $^ $(DESTDIR)$(includedir)
+
+install-lib-pc: x264.pc
+	$(INSTALL) -d $(DESTDIR)$(libdir)/pkgconfig
+	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)/pkgconfig
 
 install-lib-static: lib-static install-lib-dev
 	$(INSTALL) -d $(DESTDIR)$(libdir)
