@@ -228,7 +228,7 @@ lib-static: $(LIBX264)
 lib-shared: $(SONAME)
 
 $(LIBX264): $(GENERATED) .depend $(OBJS) $(OBJASM)
-	rm -f $(LIBX264)
+	$(RM) -f $(LIBX264)
 	$(AR)$@ $(OBJS) $(OBJASM)
 	$(if $(RANLIB), $(RANLIB) $@)
 
@@ -302,7 +302,7 @@ $(OBJS) $(OBJASM) $(OBJSO) $(OBJCLI) $(OBJCHK) $(OBJCHK_8) $(OBJCHK_10) $(OBJEXA
 	$(RC) $(RCFLAGS)$@ $<
 
 .depend: config.mak
-	@rm -f .depend
+	@$(RM) -f .depend
 	@echo 'dependency file generation...'
 ifeq ($(COMPILER),CL)
 	@$(foreach SRC, $(addprefix $(SRCPATH)/, $(SRCS) $(SRCCLI) $(SRCSO) $(SRCEXAMPLE)),
@@ -364,24 +364,23 @@ fprofiled: clean
 	$(foreach V, $(VIDS), $(foreach I, 0 1 2 3 4 5 6 7, ./x264$(EXE) $(OPT$I) --threads 1 $(V) -o $(DEVNULL) ;))
 ifeq ($(COMPILER),CL)
 # Because Visual Studio timestamps the object files within the PGD, it fails to build if they change - only the executable should be deleted
-	rm -f x264$(EXE)
+	$(RM) -f x264$(EXE)
 else
-	rm -f $(OBJPROF)
+	$(RM) -f $(OBJPROF)
 endif
 	$(MAKE) CFLAGSPROF="$(PROF_USE_CC)" LDFLAGSPROF="$(PROF_USE_LD)"
-	rm -f $(OBJPROF:%.o=%.gcda) $(OBJPROF:%.o=%.gcno) *.dyn pgopti.dpi pgopti.dpi.lock *.pgd *.pgc
+	$(RM) -f $(OBJPROF:%.o=%.gcda) $(OBJPROF:%.o=%.gcno) *.dyn pgopti.dpi pgopti.dpi.lock *.pgd *.pgc
 endif
 
 clean:
-	rm -f $(OBJS) $(OBJASM) $(OBJCLI) $(OBJSO) $(GENERATED) .depend TAGS
-	rm -f $(SONAME) *.a *.lib *.exp *.pdb x264$(EXE) x264_lookahead.clbin
-	rm -f checkasm8$(EXE) checkasm10$(EXE) $(OBJCHK) $(OBJCHK_8) $(OBJCHK_10)
-	rm -f example$(EXE) $(OBJEXAMPLE)
-	rm -f $(OBJPROF:%.o=%.gcda) $(OBJPROF:%.o=%.gcno) *.dyn pgopti.dpi pgopti.dpi.lock *.pgd *.pgc
+	$(RM) -f $(OBJS) $(OBJASM) $(OBJCLI) $(OBJSO) $(GENERATED) .depend TAGS
+	$(RM) -f $(SONAME) *.a *.lib *.exp *.pdb x264$(EXE) x264_lookahead.clbin
+	$(RM) -f checkasm8$(EXE) checkasm10$(EXE) $(OBJCHK) $(OBJCHK_8) $(OBJCHK_10)
+	$(RM) -f example$(EXE) $(OBJEXAMPLE)
+	$(RM) -f $(OBJPROF:%.o=%.gcda) $(OBJPROF:%.o=%.gcno) *.dyn pgopti.dpi pgopti.dpi.lock *.pgd *.pgc
 
 distclean: clean
-	rm -f config.mak x264_config.h config.h config.log x264.pc x264.def
-	rm -rf conftest*
+	$(RM) -f config.mak x264_config.h config.h config.log x264.pc x264.def conftest*
 
 install-cli: x264$(EXE)
 	$(INSTALL) -d $(DESTDIR)$(bindir)
@@ -423,17 +422,17 @@ ifneq ($(BASHCOMPLETIONSDIR),)
 endif
 
 uninstall:
-	rm -f $(DESTDIR)$(includedir)/x264.h $(DESTDIR)$(includedir)/x264_config.h $(DESTDIR)$(libdir)/libx264.a
-	rm -f $(DESTDIR)$(bindir)/x264$(EXE) $(DESTDIR)$(libdir)/pkgconfig/x264.pc
+	$(RM) -f $(DESTDIR)$(includedir)/x264.h $(DESTDIR)$(includedir)/x264_config.h $(DESTDIR)$(libdir)/libx264.a
+	$(RM) -f $(DESTDIR)$(bindir)/x264$(EXE) $(DESTDIR)$(libdir)/pkgconfig/x264.pc
 
 uninstall-implib:
-	rm -f $(DESTDIR)$(bindir)/$(SONAME) $(DESTDIR)$(libdir)/$(IMPLIBNAME)
+	$(RM) -f $(DESTDIR)$(bindir)/$(SONAME) $(DESTDIR)$(libdir)/$(IMPLIBNAME)
 
 uninstall-soname:
-	rm -f $(DESTDIR)$(libdir)/$(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
+	$(RM) -f $(DESTDIR)$(libdir)/$(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
 
 ifneq ($(BASHCOMPLETIONSDIR),)
-	rm -f $(DESTDIR)$(BASHCOMPLETIONSDIR)/x264
+	$(RM) -f $(DESTDIR)$(BASHCOMPLETIONSDIR)/x264
 endif
 
 etags TAGS:
