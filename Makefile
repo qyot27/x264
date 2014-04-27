@@ -12,8 +12,6 @@ vpath %.manifest $(SRCPATH)
 CFLAGS += $(CFLAGSPROF)
 LDFLAGS += $(LDFLAGSPROF)
 
-GENERATED =
-
 all: default
 default:
 
@@ -40,20 +38,9 @@ SRCCLI = x264.c autocomplete.c input/input.c input/timecode.c input/raw.c \
 
 SRCCLI_X = filters/video/cache.c filters/video/depth.c
 
-SRCSO =
-
 SRCCHK_X = tools/checkasm.c
 
 SRCEXAMPLE = example.c
-
-OBJS =
-OBJASM =
-OBJSO =
-OBJCLI =
-OBJCHK =
-OBJCHK_8 =
-OBJCHK_10 =
-OBJEXAMPLE =
 
 CONFIG := $(shell cat config.h)
 
@@ -90,7 +77,6 @@ endif
 ifneq ($(AS),)
 
 # MMX/SSE optims
-SRCASM_X =
 ifeq ($(SYS_ARCH),X86)
 ARCH_X86 = yes
 SRCASM_X += common/x86/dct-32.asm \
@@ -174,7 +160,6 @@ SRCS_X   += common/aarch64/asm-offsets.c \
             common/aarch64/mc-c.c \
             common/aarch64/predict-c.c
 
-OBJASM +=
 ifneq ($(findstring HAVE_BITDEPTH8 1, $(CONFIG)),)
 OBJASM += $(SRCASM_X:%.S=%-8.o)
 endif
