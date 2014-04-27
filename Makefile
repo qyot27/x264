@@ -388,13 +388,21 @@ install-lib-static: lib-static install-lib-dev
 install-lib-shared: lib-shared install-lib-dev
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 ifneq ($(IMPLIBNAME),)
+install-lib-shared: install-implib
+uninstall: uninstall-implib
+else ifneq ($(SONAME),)
+install-lib-shared: install-soname
+uninstall: uninstall-soname
+endif
+
+install-implib:
 	$(INSTALL) -d $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $(SONAME) $(DESTDIR)$(bindir)
 	$(INSTALL) -m 644 $(IMPLIBNAME) $(DESTDIR)$(libdir)
-else ifneq ($(SONAME),)
+
+install-soname:
 	ln -f -s $(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
 	$(INSTALL) -m 755 $(SONAME) $(DESTDIR)$(libdir)
-endif
 
 install-bashcompletion:
 ifneq ($(BASHCOMPLETIONSDIR),)
@@ -405,11 +413,13 @@ endif
 uninstall:
 	rm -f $(DESTDIR)$(includedir)/x264.h $(DESTDIR)$(includedir)/x264_config.h $(DESTDIR)$(libdir)/libx264.a
 	rm -f $(DESTDIR)$(bindir)/x264$(EXE) $(DESTDIR)$(libdir)/pkgconfig/x264.pc
-ifneq ($(IMPLIBNAME),)
+
+uninstall-implib:
 	rm -f $(DESTDIR)$(bindir)/$(SONAME) $(DESTDIR)$(libdir)/$(IMPLIBNAME)
-else ifneq ($(SONAME),)
+
+uninstall-soname:
 	rm -f $(DESTDIR)$(libdir)/$(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
-endif
+
 ifneq ($(BASHCOMPLETIONSDIR),)
 	rm -f $(DESTDIR)$(BASHCOMPLETIONSDIR)/x264
 endif
