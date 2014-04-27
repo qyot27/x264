@@ -396,7 +396,7 @@ uninstall: uninstall-soname
 endif
 
 install-implib:
-	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(libdir)
 	$(INSTALL) -m 755 $(SONAME) $(DESTDIR)$(bindir)
 	$(INSTALL) -m 644 $(IMPLIBNAME) $(DESTDIR)$(libdir)
 
