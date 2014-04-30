@@ -406,17 +406,20 @@ install-static: $(LIBX264)
 install-lib-shared: lib-shared install-lib-dev
 	$(INSTALL) -d $(DESTDIR)$(libdir)
 ifneq ($(IMPLIBNAME),)
-install-lib-shared: install-implib
+install-lib-shared: install-implib install-implib-soname
 uninstall: uninstall-implib
 else ifneq ($(SONAME),)
 install-lib-shared: install-soname
 uninstall: uninstall-soname
 endif
 
-install-implib:
-	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(libdir)
-	$(INSTALL) -m 755 $(SONAME) $(DESTDIR)$(bindir)
-	$(INSTALL) -m 644 $(IMPLIBNAME) $(DESTDIR)$(libdir)
+install-implib: $(IMPLIBNAME)
+	$(INSTALL) -d $(DESTDIR)$(libdir)
+	$(INSTALL) -m 644 $< $(DESTDIR)$(libdir)
+
+install-implib-soname: $(SONAME)
+	$(INSTALL) -d $(DESTDIR)$(bindir)
+	$(INSTALL) -m 755 $< $(DESTDIR)$(bindir)
 
 install-soname:
 	ln -f -s $(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
