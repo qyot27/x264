@@ -421,9 +421,9 @@ install-implib-soname: $(SONAME)
 	$(INSTALL) -d $(DESTDIR)$(bindir)
 	$(INSTALL) -m 755 $< $(DESTDIR)$(bindir)
 
-install-soname:
-	ln -f -s $(SONAME) $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
-	$(INSTALL) -m 755 $(SONAME) $(DESTDIR)$(libdir)
+install-soname: $(SONAME)
+	ln -f -s $< $(DESTDIR)$(libdir)/libx264.$(SOSUFFIX)
+	$(INSTALL) -m 755 $< $(DESTDIR)$(libdir)
 
 install-bashcompletion:
 ifneq ($(BASHCOMPLETIONSDIR),)
